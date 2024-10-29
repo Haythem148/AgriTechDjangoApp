@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Quantity Prediction</title>
+    {% csrf_token %}
+</head>
+<body>
+    <h1>Water Quantity Prediction</h1>
+    <input type="text" id="inputText" name="input_text" placeholder="Enter your question about water quantity...">
+    <button onclick="fetchWaterPrediction()">Predict</button>
+    <div id="predictionResult"></div>
+
+    <script>
+        async function fetchWaterPrediction() {
+            const inputText = document.getElementById('inputText').value;
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            const response = await fetch('/water-management/predict-water/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,  // Include the CSRF token in the headers
+                },
+                body: JSON.stringify({
+                    input_text: inputText,
+                }),
+            });
+
+            const data = await response.json();
+            const resultDiv = document.getElementById('predictionResult');
+
+            if (response.ok) {
+                resultDiv.innerHTML = 'Prediction: ' + JSON.stringify(data.prediction);
+            } else {
+                resultDiv.innerHTML = 'Error: ' + data.error;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+{% extends 'farms/base.html' %}
+
+{% block title %}Water Source Details{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <div class="container">
+        <h1 class="text-center">Water Source Details</h1>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center">{{ source.nom }}</h1>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Details</h5>
+            <p class="card-text">Type: {{ source.type }}</p>
+            <p class="card-text">Capacity: {{ source.capacite }} L</p>
+            <p class="card-text">Debit: {{ source.debit }} L/min</p>
+            <a href="{% url 'water_management:source_update' source.pk %}" class="btn btn-warning">Edit</a>
+            <a href="{% url 'water_management:source_delete' source.pk %}" class="btn btn-danger">Delete</a>
+            <a href="{% url 'water_management:source_list' %}" class="btn btn-secondary">Back to List</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

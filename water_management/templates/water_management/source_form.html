@@ -1,0 +1,26 @@
+{% extends 'farms/base.html' %}
+
+{% block title %}{% if form.instance.pk %}Edit Water Source{% else %}Add Water Source{% endif %}{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <div class="container">
+        <h1 class="text-center">{% if form.instance.pk %}Edit Water Source{% else %}Add Water Source{% endif %}</h1>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+            {{ form.as_p }}
+        </div>
+        <button type="submit" class="btn btn-primary">
+            {% if form.instance.pk %}Update{% else %}Create{% endif %}
+        </button>
+        <a href="{% url 'water_management:source_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

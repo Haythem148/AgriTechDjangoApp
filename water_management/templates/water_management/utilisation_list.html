@@ -1,0 +1,100 @@
+{% extends 'farms/base.html' %}
+
+{% block title %}Water Utilisations{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <div class="container">
+        <h1 class="text-center">Water Utilisations</h1>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <!-- Prediction Section -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Water Quantity Prediction</h5>
+            <input type="text" id="inputText" name="input_text" class="form-control" placeholder="Enter your question about water quantity..." required>
+            <button onclick="fetchWaterPrediction()" class="btn btn-primary mt-3">Predict</button>
+            <div id="predictionResult" class="mt-3"></div>
+            <div id="loadingMessage" class="mt-2" style="display: none;">Loading...</div> <!-- Loading Message -->
+        </div>
+    </div>
+
+    <a href="{% url 'water_management:utilisation_create' %}" class="btn btn-primary mb-3">
+        <i class="bi bi-plus-circle"></i> Add Water Utilisation
+    </a>
+    
+    <div class="row">
+        {% for utilisation in utilisations %}
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ utilisation.source_eau.nom }}</h5>
+                        <p class="card-text">Quantity Used: {{ utilisation.quantite_utilisee }} L<br>Date: {{ utilisation.date }}</p>
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'water_management:utilisation_update' utilisation.pk %}" class="btn btn-warning">
+                                <i class="bi bi-pencil"></i> Edit
+                            </a>
+                            <a href="{% url 'water_management:utilisation_delete' utilisation.pk %}" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Delete
+                            </a>
+                            <a href="{% url 'water_management:utilisation_detail' utilisation.pk %}" class="btn btn-info">
+                                <i class="bi bi-eye"></i> View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    async function fetchWaterPrediction() {
+        const inputText = document.getElementById('inputText').value;
+        const csrfToken = '{{ csrf_token }}'; // Use the Django csrf_token directly
+        const resultDiv = document.getElementById('predictionResult');
+        const loadingMessage = document.getElementById('loadingMessage');
+
+        // Show loading message
+        loadingMessage.style.display = 'block';
+        resultDiv.innerHTML = ''; // Clear previous results
+
+        const response = await fetch('/water-management/predict-water/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,  // Include the CSRF token in the headers
+            },
+            body: JSON.stringify({
+                input_text: inputText,
+            }),
+        });
+
+        const data = await response.json();
+
+        // Hide loading message
+        loadingMessage.style.display = 'none';
+
+        if (response.ok) {
+            const predictionText = data.prediction[0]?.generated_text || "No prediction available"; // Fallback message if undefined
+
+            resultDiv.innerHTML = `
+                <div class="alert alert-success">
+                    <strong>Prediction:</strong> ${predictionText}
+                </div>
+            `;
+        } else {
+            resultDiv.innerHTML = `
+                <div class="alert alert-danger">
+                    <strong>Error:</strong> ${data.error}
+                </div>
+            `;
+        }
+    }
+</script>
+{% endblock %}

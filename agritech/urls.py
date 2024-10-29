@@ -5,4 +5,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('farms.urls')),  # Remove 'api/' if it's there
     path('', include('farms.urls_frontend')),  # HTML views
+    path('water-management/', include('water_management.urls')),
 ]

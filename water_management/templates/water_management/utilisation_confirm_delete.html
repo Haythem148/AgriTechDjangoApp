@@ -1,0 +1,25 @@
+{% extends 'farms/base.html' %}
+
+{% block title %}Delete Water Utilisation{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <div class="container">
+        <h1 class="text-center">Delete Water Utilisation</h1>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="alert alert-danger">
+        <h5>Are you sure you want to delete the utilization of "{{ utilisation.source_eau.nom }}"?</h5>
+        <p>This action cannot be undone.</p>
+    </div>
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a href="{% url 'water_management:utilisation_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
