@@ -1,0 +1,15 @@
+{% extends 'gestionEngrais/base.html' %}
+
+{% block content %}
+<div class="mt-4">
+    <h2>Add New Engrais Application</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">
+            Save Application
+        </button>
+        <a href="{% url 'application-engrais-list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
