@@ -1,45 +1,95 @@
 {% extends 'gestionEngrais/base.html' %}
 
-{% block title %}Engrais{% endblock %}
+{% block title %}Fertilizers{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <div class="container">
+        <h1 class="text-center">Fertilizer Management</h1>
+    </div>
+</div>
+{% endblock %}
 
 {% block content %}
-<div class="mt-4">
-    <h2>Engrais</h2>
-    <a href="{% url 'engrais-create' %}" class="btn btn-success mb-3">
-        <i class="bi bi-plus-circle"></i> Add New engrais
-    </a>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Composition</th>
-                <th>Recommended Dose (kg/ha)</th>
-                <th>Soil Type</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for engrais in engrais %}
-            <tr>
-                <td>{{ engrais.nom }}</td>
-                <td>{{ engrais.composition }}</td>
-                <td>{{ engrais.recommandation_dose }}</td>
-                <td>{{ engrais.type_sol }}</td>
-                <td>
-                    <a href="{% url 'engrais-update' engrais.pk %}" class="btn btn-warning btn-sm">
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2><i class="bi bi-grid"></i> Fertilizers</h2>
+            <a href="{% url 'gestionEngrais:engrais-create' %}" class="btn btn-success">
+                <i class="bi bi-plus-circle"></i> Add New Fertilizer
+            </a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control" placeholder="Search fertilizers...">
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card stats-card">
+            <div class="card-body">
+                <h5 class="card-title">Total Fertilizers</h5>
+                <p class="card-text display-6">{{ engrais.count }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stats-card">
+            <div class="card-body">
+                <h5 class="card-title">Total Applications</h5>
+                <p class="card-text display-6">{{ total_applications }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stats-card">
+            <div class="card-body">
+                <h5 class="card-title">Total Quantity</h5>
+                <p class="card-text display-6">{{ total_quantity|default:0 }} kg</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for item in engrais %}
+    <div class="col">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ item.nom }}</h5>
+                <p class="card-text">
+                    <i class="bi bi-diagram-3 text-primary"></i> {{ item.composition }}<br>
+                    <i class="bi bi-droplet text-success"></i> {{ item.recommandation_dose }} kg/ha<br>
+                    <i class="bi bi-layers text-info"></i> {{ item.type_sol }}
+                </p>
+                <div class="d-flex justify-content-between mt-3">
+                    <a href="{% url 'gestionEngrais:engrais-update' item.id %}" class="btn btn-warning">
                         <i class="bi bi-pencil"></i> Edit
                     </a>
-                    <a href="{% url 'engrais-delete' engrais.pk %}" class="btn btn-danger btn-sm">
+                    <a href="{% url 'gestionEngrais:engrais-delete' item.id %}" class="btn btn-danger">
                         <i class="bi bi-trash"></i> Delete
                     </a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="5" class="text-center">No Engrais found.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="bi bi-emoji-frown display-1 text-muted"></i>
+                <h3 class="mt-3">No fertilizers found</h3>
+                <p class="text-muted">Start by adding your first fertilizer!</p>
+                <a href="{% url 'gestionEngrais:engrais-create' %}" class="btn btn-success">
+                    <i class="bi bi-plus-circle"></i> Add New Fertilizer
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
 </div>
 {% endblock %}

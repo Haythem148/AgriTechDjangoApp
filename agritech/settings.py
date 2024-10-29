@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'crispy_forms',
     'crispy_bootstrap5',
-    'farmer',
     'gestionEngrais',
 ]
 
@@ -133,7 +132,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-AUTH_USER_MODEL = 'farmer.Agriculteur'
 
 
 # Static files (CSS, JavaScript, Images)

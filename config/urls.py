@@ -7,4 +7,5 @@ urlpatterns = [
 
     path('dechets/', include('dechets.urls', namespace='dechets')),
     path('farms/', include('farms.urls')),
+    path('engrais/', include('gestionEngrais.urls')),
 ] 

@@ -1,15 +1,55 @@
 {% extends 'gestionEngrais/base.html' %}
 
+{% block title %}{% if form.instance.pk %}Edit{% else %}Add New{% endif %} Fertilizer{% endblock %}
+
 {% block content %}
-<div class="mt-4">
-    <h2>{% if form.instance.pk %}Edit{% else %}Add New{% endif %} engrais</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">
-            Save engrais
-        </button>
-        <a href="{% url 'engrais-list' %}" class="btn btn-secondary">Cancel</a>
-    </form>
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4 class="card-title mb-4">
+                    <i class="bi bi-flower1"></i> 
+                    {% if form.instance.pk %}Edit{% else %}Add New{% endif %} Fertilizer
+                </h4>
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="{{ form.nom.id_for_label }}" class="form-label">Name</label>
+                        {{ form.nom.errors }}
+                        <input type="text" name="{{ form.nom.name }}" 
+                               class="form-control {% if form.nom.errors %}is-invalid{% endif %}"
+                               value="{{ form.nom.value|default:'' }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.composition.id_for_label }}" class="form-label">Composition</label>
+                        {{ form.composition.errors }}
+                        <input type="text" name="{{ form.composition.name }}" 
+                               class="form-control {% if form.composition.errors %}is-invalid{% endif %}"
+                               value="{{ form.composition.value|default:'' }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.recommandation_dose.id_for_label }}" class="form-label">Recommended Dose (kg/ha)</label>
+                        {{ form.recommandation_dose.errors }}
+                        <input type="number" step="0.01" name="{{ form.recommandation_dose.name }}" 
+                               class="form-control {% if form.recommandation_dose.errors %}is-invalid{% endif %}"
+                               value="{{ form.recommandation_dose.value|default:'' }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.type_sol.id_for_label }}" class="form-label">Soil Type</label>
+                        {{ form.type_sol.errors }}
+                        <input type="text" name="{{ form.type_sol.name }}" 
+                               class="form-control {% if form.type_sol.errors %}is-invalid{% endif %}"
+                               value="{{ form.type_sol.value|default:'' }}">
+                    </div>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'gestionEngrais:engrais-list' %}" class="btn btn-secondary me-md-2">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Save Fertilizer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
+
+                      
