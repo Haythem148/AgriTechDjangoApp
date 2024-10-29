@@ -1,0 +1,105 @@
+{% extends 'dechets/base.html' %}
+
+{% block title %}{% if form.instance.pk %}Modifier{% else %}Nouveau{% endif %} Type de Déchet{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <div class="container">
+        <h1 class="text-center">
+            {% if form.instance.pk %}
+                Modifier: {{ form.instance.nom }}
+            {% else %}
+                Ajouter un Type de Déchet
+            {% endif %}
+        </h1>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form method="post" novalidate class="dechet-form">
+                    {% csrf_token %}
+                    
+                    <!-- Basic Information Section -->
+                    <div class="mb-4">
+                        <h4 class="card-title mb-3">
+                            <i class="bi bi-info-circle"></i> Informations de Base
+                        </h4>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.nom.id_for_label }}" class="form-label">
+                                <i class="bi bi-tag"></i> Nom du Type
+                            </label>
+                            {{ form.nom.errors }}
+                            <input type="text" 
+                                   name="{{ form.nom.name }}" 
+                                   id="{{ form.nom.id_for_label }}" 
+                                   class="form-control {% if form.nom.errors %}is-invalid{% endif %}"
+                                   value="{{ form.nom.value|default:'' }}"
+                                   placeholder="Entrez le nom du type de déchet">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.description.id_for_label }}" class="form-label">
+                                <i class="bi bi-card-text"></i> Description
+                            </label>
+                            {{ form.description.errors }}
+                            {{ form.description }}
+                        </div>
+                    </div>
+
+                    <!-- Treatment Information -->
+                    <div class="mb-4">
+                        <h4 class="card-title mb-3">
+                            <i class="bi bi-gear"></i> Informations de Traitement
+                        </h4>
+                        
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                {{ form.biodegradable }}
+                                <label class="form-check-label" for="{{ form.biodegradable.id_for_label }}">
+                                    Biodégradable
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.methode_traitement.id_for_label }}" class="form-label">
+                                Méthode de Traitement
+                            </label>
+                            {{ form.methode_traitement.errors }}
+                            {{ form.methode_traitement }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.efficacite_traitement.id_for_label }}" class="form-label">
+                                Efficacité de Traitement (%)
+                            </label>
+                            {{ form.efficacite_traitement.errors }}
+                            {{ form.efficacite_traitement }}
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'dechets:type-dechet-list' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Retour à la Liste
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            {% if form.instance.pk %}
+                                <i class="bi bi-check-circle"></i> Mettre à jour
+                            {% else %}
+                                <i class="bi bi-plus-circle"></i> Créer
+                            {% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

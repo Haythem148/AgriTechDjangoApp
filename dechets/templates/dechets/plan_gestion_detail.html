@@ -1,0 +1,69 @@
+{% extends 'dechets/base.html' %}
+
+{% block title %}Plan de Gestion - {{ plan.farm }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="card-title mb-0">Détails du Plan</h2>
+                        <div>
+                            <a href="{% url 'dechets:plan-update' plan.pk %}" class="btn btn-primary">
+                                <i class="bi bi-pencil"></i> Modifier
+                            </a>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                <i class="bi bi-trash"></i> Supprimer
+                            </button>
+                        </div>
+                    </div>
+
+                    <dl class="row">
+                        <dt class="col-sm-4">Exploitation</dt>
+                        <dd class="col-sm-8">{{ plan.farm }}</dd>
+
+                        <dt class="col-sm-4">Type de Déchet</dt>
+                        <dd class="col-sm-8">{{ plan.type_dechet }}</dd>
+
+                        <dt class="col-sm-4">Quantité</dt>
+                        <dd class="col-sm-8">{{ plan.quantite }} kg</dd>
+
+                        <dt class="col-sm-4">Date</dt>
+                        <dd class="col-sm-8">{{ plan.date }}</dd>
+                    </dl>
+
+                    <div class="mt-4">
+                        <a href="{% url 'dechets:plan-list' %}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Retour à la Liste
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmer la Suppression</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer ce plan de gestion ?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <form action="{% url 'dechets:plan-delete' plan.pk %}" method="post" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Confirmer la Suppression</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

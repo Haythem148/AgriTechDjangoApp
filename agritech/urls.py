@@ -4,5 +4,6 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('farms.urls')),  # Remove 'api/' if it's there
-    path('', include('farms.urls_frontend')),  # HTML views
+    path('', include('farms.urls_frontend')), 
+    path('dechets/', include('dechets.urls', namespace='dechets')), # HTML views
 ]

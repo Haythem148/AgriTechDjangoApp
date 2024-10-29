@@ -1,0 +1,13 @@
+<nav>
+    <!-- ... autres liens ... -->
+    <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" 
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Gestion des Déchets
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="{% url 'dechets:type-dechet-list' %}">Types de Déchets</a>
+            <a class="dropdown-item" href="{% url 'dechets:plan-list' %}">Plans de Gestion</a>
+        </div>
+    </div>
+</nav> 

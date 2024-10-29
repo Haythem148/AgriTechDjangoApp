@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'farms',
+    'dechets',
     'django_filters',
     'widget_tweaks',
     'crispy_forms',
