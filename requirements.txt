@@ -17,3 +17,9 @@ python-dateutil>=2.8.0
 
 # Django requirements (if not already present)
 django-environ>=0.11.0
+djangorestframework
+django-filter
+django-widget-tweaks
+django-crispy-forms
+crispy-bootstrap5
+
