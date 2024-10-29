@@ -1,0 +1,222 @@
+{% extends 'farms/base.html' %}
+
+{% block title %}{% if form.instance.pk %}Edit Farm{% else %}New Farm{% endif %}{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <div class="container">
+        <h1 class="text-center">
+            {% if form.instance.pk %}
+                Edit Farm: {{ form.instance.name }}
+            {% else %}
+                Register New Farm
+            {% endif %}
+        </h1>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data" novalidate class="farm-form">
+                    {% csrf_token %}
+                    
+                    <!-- Farm Details Section -->
+                    <div class="mb-4">
+                        <h4 class="card-title mb-3">
+                            <i class="bi bi-info-circle"></i> Basic Information
+                        </h4>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.name.id_for_label }}" class="form-label">
+                                <i class="bi bi-house"></i> Farm Name
+                            </label>
+                            {{ form.name.errors }}
+                            <input type="text" 
+                                   name="{{ form.name.name }}" 
+                                   id="{{ form.name.id_for_label }}" 
+                                   class="form-control {% if form.name.errors %}is-invalid{% endif %}"
+                                   value="{{ form.name.value|default:'' }}"
+                                   placeholder="Enter farm name">
+                            {% if form.name.help_text %}
+                            <div class="form-text">{{ form.name.help_text }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.location.id_for_label }}" class="form-label">
+                                <i class="bi bi-geo-alt"></i> Location
+                            </label>
+                            {{ form.location.errors }}
+                            <div class="input-group">
+                                <input type="text" 
+                                       name="{{ form.location.name }}" 
+                                       id="{{ form.location.id_for_label }}" 
+                                       class="form-control {% if form.location.errors %}is-invalid{% endif %}"
+                                       value="{{ form.location.value|default:'' }}"
+                                       placeholder="Enter farm location">
+                                <button class="btn btn-outline-secondary" type="button" id="getLocation">
+                                    <i class="bi bi-crosshair"></i>
+                                </button>
+                            </div>
+                            {% if form.location.help_text %}
+                            <div class="form-text">{{ form.location.help_text }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Map Preview -->
+                        <div class="mb-3">
+                            <div id="map" style="height: 200px; background-color: #eee;" class="rounded">
+                                <!-- Map will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.area.id_for_label }}" class="form-label">
+                                <i class="bi bi-arrows-angle-expand"></i> Total Area (hectares)
+                            </label>
+                            {{ form.area.errors }}
+                            <div class="input-group">
+                                <input type="number" 
+                                       name="{{ form.area.name }}" 
+                                       id="{{ form.area.id_for_label }}" 
+                                       class="form-control {% if form.area.errors %}is-invalid{% endif %}"
+                                       value="{{ form.area.value|default:'' }}"
+                                       step="0.01"
+                                       min="0">
+                                <span class="input-group-text">ha</span>
+                            </div>
+                            {% if form.area.help_text %}
+                            <div class="form-text">{{ form.area.help_text }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Additional Information Section -->
+                    <div class="mb-4">
+                        <h4 class="card-title mb-3">
+                            <i class="bi bi-gear"></i> Additional Information
+                        </h4>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Soil Type</label>
+                            <select class="form-select">
+                                <option value="">Select soil type...</option>
+                                <option value="clay">Clay</option>
+                                <option value="sandy">Sandy</option>
+                                <option value="loamy">Loamy</option>
+                                <option value="silt">Silt</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Farming Method</label>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="farmingMethod" id="organic">
+                                        <label class="form-check-label" for="organic">
+                                            <i class="bi bi-flower1"></i> Organic
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="farmingMethod" id="conventional">
+                                        <label class="form-check-label" for="conventional">
+                                            <i class="bi bi-tools"></i> Conventional
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="farmingMethod" id="hydroponic">
+                                        <label class="form-check-label" for="hydroponic">
+                                            <i class="bi bi-droplet"></i> Hydroponic
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Weather Preview -->
+                    <div class="card weather-card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="bi bi-cloud-sun"></i> Local Weather Forecast
+                            </h5>
+                            <div class="text-center">
+                                <i class="bi bi-sun display-4"></i>
+                                <h2 class="mt-2">25°C</h2>
+                                <p>Perfect conditions for farming!</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'farm-list' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Back to Farms
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            {% if form.instance.pk %}
+                                <i class="bi bi-check-circle"></i> Update Farm
+                            {% else %}
+                                <i class="bi bi-plus-circle"></i> Create Farm
+                            {% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAOVYRIgupAurZup5y1PRh8Ismb1A3lLao&libraries=places&callback=initMap
+"></script>
+<script>
+    // Initialize map
+    function initMap() {
+        const map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 8,
+            center: { lat: -34.397, lng: 150.644 }
+        });
+    }
+
+    // Get current location
+    document.getElementById('getLocation').addEventListener('click', function() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                document.getElementById('{{ form.location.id_for_label }}').value = 
+                    `${position.coords.latitude}, ${position.coords.longitude}`;
+                
+                // Update map
+                const map = new google.maps.Map(document.getElementById('map'), {
+                    zoom: 15,
+                    center: { 
+                        lat: position.coords.latitude, 
+                        lng: position.coords.longitude 
+                    }
+                });
+
+                new google.maps.Marker({
+                    position: { 
+                        lat: position.coords.latitude, 
+                        lng: position.coords.longitude 
+                    },
+                    map: map
+                });
+            });
+        }
+    });
+
+    // Initialize map on page load
+    window.addEventListener('load', initMap);
+</script>
+{% endblock %}

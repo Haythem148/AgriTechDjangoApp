@@ -1,0 +1,503 @@
+{% extends 'farms/base.html' %}
+
+{% block title %}{{ farm.name }}{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <div class="container">
+        <h1 class="text-center">{{ farm.name }}</h1>
+    </div>
+</div>
+
+<!-- Add Mapbox CSS in the header -->
+<link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'farms:farm-list' %}">Farms</a></li>
+                <li class="breadcrumb-item active">{{ farm.name }}</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{% url 'farms:farm-update' farm.pk %}" class="btn btn-primary">
+            <i class="bi bi-pencil"></i> Edit Farm
+        </a>
+        <a href="#" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteFarmModal">Delete Farm</a>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Farm Overview Card -->
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4 class="card-title">Farm Overview</h4>
+                <div class="mb-3">
+                    <label class="text-muted">Location</label>
+                    <p><i class="bi bi-geo-alt"></i> {{ farm.location }}</p>
+                </div>
+                <div class="mb-3">
+                    <label class="text-muted">Total Area</label>
+                    <p><i class="bi bi-arrows-angle-expand"></i> {{ farm.area }} hectares</p>
+                </div>
+                <div class="mb-3">
+                    <label class="text-muted">Active Crops</label>
+                    <p><i class="bi bi-tree"></i> {{ farm.crops.count }}</p>
+                </div>
+                <div class="mb-3">
+                    <label class="text-muted">Location Map</label>
+                    <div id="map" style="width: 100%; height: 200px; border-radius: 4px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weather Card -->
+        <div class="card weather-card mb-4">
+            <div class="card-body">
+                <h4 class="card-title">Local Weather</h4>
+                <div class="text-center mb-3">
+                    <i class="bi bi-sun display-4"></i>
+                    <h2 class="mt-2">{{ weather.temperature|default:"25" }}°C</h2>
+                    <p>{{ weather.condition|default:"Sunny" }}</p>
+                </div>
+                <hr>
+                <div class="row text-center">
+                    <div class="col">
+                        <p class="mb-0"><i class="bi bi-droplet"></i></p>
+                        <small>Humidity</small>
+                        <p class="mb-0">{{ weather.humidity|default:"65" }}%</p>
+                    </div>
+                    <div class="col">
+                        <p class="mb-0"><i class="bi bi-wind"></i></p>
+                        <small>Wind</small>
+                        <p class="mb-0">{{ weather.wind_speed|default:"12" }} km/h</p>
+                    </div>
+                    <div class="col">
+                        <p class="mb-0"><i class="bi bi-cloud-rain"></i></p>
+                        <small>Rain</small>
+                        <p class="mb-0">{{ weather.rainfall|default:"0" }} mm</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="col-md-8">
+        <!-- Crops Section -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="card-title mb-0">Crops</h4>
+                    <a href="{% url 'farms:crop-create' farm_pk=farm.pk %}" class="btn btn-success">
+                        <i class="bi bi-plus-circle"></i> Add New Crop
+                    </a>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Growth Stage</th>
+                                <th>Water Req.</th>
+                                <th>Fertilizer Req.</th>
+                                <th>Health</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for crop in farm.crops.all %}
+                            <tr>
+                                <td>{{ crop.name }}</td>
+                                <td>{{ crop.get_crop_type_display }}</td>
+                                <td>{{ crop.get_growth_stage_display }}</td>
+                                <td>{{ crop.water_requirements }} L/day</td>
+                                <td>{{ crop.fertilizer_requirements }} kg/ha</td>
+                                <td>
+                                    <div class="progress" style="height: 20px;">
+                                        <div class="progress-bar" 
+                                             role="progressbar" 
+                                             
+                                             aria-valuenow="{{ crop.health }}" 
+                                             aria-valuemin="0" 
+                                             aria-valuemax="100">
+                                            {{ crop.health }}%
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <a href="{% url 'farms:crop-detail' crop.pk %}" class="btn btn-sm btn-primary">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a href="{% url 'farms:crop-update' crop.pk %}" class="btn btn-sm btn-warning">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a href="{% url 'farms:crop-delete' crop.pk %}" class="btn btn-sm btn-danger">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center">
+                                    <p class="text-muted my-3">No crops added yet.</p>
+                                    <a href="{% url 'farms:crop-create' farm.pk %}" class="btn btn-success">
+                                        <i class="bi bi-plus-circle"></i> Add First Crop
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Section -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Crop Analytics</h4>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-4">
+                                    <h6 class="text-muted">Total Crops</h6>
+                                    <h3>{{ crop_stats.total_crops }}</h3>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-4">
+                                    <h6 class="text-muted">Total Area</h6>
+                                    <h3>{{ crop_stats.total_area|floatformat:2 }} ha</h3>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-4">
+                                    <h6 class="text-muted">Average Crop Health</h6>
+                                    <div class="progress" style="height: 25px;">
+                                        <div class="progress-bar {% if crop_stats.avg_health >= 70 %}bg-success{% elif crop_stats.avg_health >= 40 %}bg-warning{% else %}bg-danger{% endif %}"
+                                             role="progressbar"
+                                             style="width: {{ crop_stats.avg_health }}%">
+                                            {{ crop_stats.avg_health|floatformat:1 }}%
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Insights Section -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">AI Insights</h4>
+                        {% for insight in ai_insights %}
+                        <div class="crop-insight mb-3 p-3 border-bottom">
+                            <h5>{{ insight.crop_name }}</h5>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <h6>Predicted Health</h6>
+                                    <div class="progress" style="height: 25px;">
+                                        <div class="progress-bar {% if insight.predicted_health >= 70 %}bg-success{% elif insight.predicted_health >= 40 %}bg-warning{% else %}bg-danger{% endif %}"
+                                             role="progressbar"
+                                             style="width: {{ insight.predicted_health }}%">
+                                            {{ insight.predicted_health }}%
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <h6>Risk Analysis</h6>
+                                    <ul class="list-group">
+                                        {% for risk_type, risk in insight.risks.items %}
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            {{ risk_type|title }}
+                                            <span class="badge {% if risk.level == 'HIGH' %}bg-danger{% else %}bg-success{% endif %} rounded-pill">
+                                                {{ risk.level }}
+                                            </span>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                <div class="col-md-4">
+                                    <h6>Optimization Tips</h6>
+                                    <ul class="list-group">
+                                        <li class="list-group-item">Water: {{ insight.optimization_suggestions.water_optimization.optimal_usage }} L/day</li>
+                                        <li class="list-group-item">Fertilizer: {{ insight.optimization_suggestions.fertilizer_planning.recommended_amount }}</li>
+                                        <li class="list-group-item">Harvest: {{ insight.optimization_suggestions.harvest_timing.recommendation }}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Distribution Charts -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Crop Types Distribution</h4>
+                        <canvas id="cropTypeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Growth Stages Distribution</h4>
+                        <canvas id="growthStageChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+        // Crop Types Chart
+        new Chart(document.getElementById('cropTypeChart'), {
+            type: 'pie',
+            data: {
+                labels: [{% for type in crop_stats.crop_types %}'{{ type.type|title }}'{% if not forloop.last %}, {% endif %}{% endfor %}],
+                datasets: [{
+                    data: [{% for type in crop_stats.crop_types %}{{ type.count }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                    backgroundColor: ['#28a745', '#17a2b8', '#ffc107', '#dc3545']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        display: true,
+                        labels: {
+                            padding: 20,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Growth Stages Chart
+        new Chart(document.getElementById('growthStageChart'), {
+            type: 'pie',
+            data: {
+                labels: [{% for stage in crop_stats.growth_stages %}'{{ stage.growth_stage }}'{% if not forloop.last %}, {% endif %}{% endfor %}],
+                datasets: [{
+                    data: [{% for stage in crop_stats.growth_stages %}{{ stage.count }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                    backgroundColor: ['#007bff', '#28a745', '#17a2b8', '#ffc107', '#dc3545']
+                }]
+            }
+        });
+        </script>
+    </div>
+</div>
+
+<!-- Delete Farm Modal -->
+<div class="modal fade" id="deleteFarmModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Farm</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete "{{ farm.name }}"? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form action="{% url 'farms:farm-delete' farm.pk %}" method="post" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Delete Farm</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Required JS libraries -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js'></script>
+
+<script>
+    // Farm Analytics Chart
+    const ctx = document.getElementById('farmAnalytics').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+                label: 'Crop Yield (tons)',
+                data: [12, 19, 15, 17, 14, 15],
+                borderColor: '#4CAF50',
+                tension: 0.1
+            }, {
+                label: 'Water Usage (kL)',
+                data: [15, 12, 14, 16, 13, 11],
+                borderColor: '#2196F3',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                }
+            }
+        }
+    });
+
+    // Initialize map with error handling
+    try {
+        const mapboxToken = '{{ mapbox_token }}';
+        if (!mapboxToken) {
+            throw new Error('Mapbox token is required');
+        }
+        
+        mapboxgl.accessToken = mapboxToken;
+        // Validate coordinates
+        const longitude = parseFloat('{{ farm.longitude|default:"0"|floatformat:6 }}');
+        const latitude = parseFloat('{{ farm.latitude|default:"0"|floatformat:6 }}');
+
+        if (!isValidCoordinates(longitude, latitude)) {
+            throw new Error('Invalid coordinates');
+        }
+
+        // Initialize map with fallback coordinates
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/satellite-v9',
+            center: [longitude, latitude],
+            zoom: 13,
+            minZoom: 2,
+            maxZoom: 18
+        });
+
+        // Add navigation controls with error handling
+        try {
+            map.addControl(new mapboxgl.NavigationControl());
+        } catch (error) {
+            console.error('Failed to add navigation controls:', error);
+        }
+
+        // Handle map load event
+        map.on('load', () => {
+            try {
+                // Add marker for farm location
+                new mapboxgl.Marker({
+                    color: '#4CAF50'
+                })
+                .setLngLat([longitude, latitude])
+                .addTo(map);
+
+                // Fit map to marker bounds
+                map.fitBounds(
+                    [[longitude - 0.1, latitude - 0.1], [longitude + 0.1, latitude + 0.1]],
+                    { padding: 50 }
+                );
+            } catch (error) {
+                console.error('Failed to add marker:', error);
+            }
+        });
+
+        // Handle map error events
+        map.on('error', (error) => {
+            console.error('Map error:', error);
+            displayMapError();
+        });
+    } catch (error) {
+        console.error('Failed to initialize map:', error);
+        displayMapError();
+    }
+
+    // Helper function to validate coordinates
+    function isValidCoordinates(lng, lat) {
+        return (
+            !isNaN(lng) && 
+            !isNaN(lat) && 
+            lng >= -180 && 
+            lng <= 180 && 
+            lat >= -90 && 
+            lat <= 90
+        );
+    }
+
+    // Helper function to display map error
+    function displayMapError() {
+        const mapContainer = document.getElementById('map');
+        if (mapContainer) {
+            mapContainer.innerHTML = `
+                <div class="alert alert-danger m-2" role="alert">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    Failed to load map. Please try again later.
+                </div>
+            `;
+        }
+    }
+</script>
+{% endblock scripts %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Crop Types Chart
+    new Chart(document.getElementById('cropTypeChart'), {
+        type: 'pie',
+        data: {
+            labels: [{% for type in crop_stats.crop_types %}'{{ type.crop_type }}'{% if not forloop.last %}, {% endif %}{% endfor %}],
+            datasets: [{
+                data: [{% for type in crop_stats.crop_types %}{{ type.count }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                backgroundColor: ['#28a745', '#17a2b8', '#ffc107', '#dc3545']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    // Growth Stages Chart
+    new Chart(document.getElementById('growthStageChart'), {
+        type: 'pie',
+        data: {
+            labels: [{% for stage in crop_stats.growth_stages %}'{{ stage.growth_stage }}'{% if not forloop.last %}, {% endif %}{% endfor %}],
+            datasets: [{
+                data: [{% for stage in crop_stats.growth_stages %}{{ stage.count }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                backgroundColor: ['#007bff', '#28a745', '#17a2b8', '#ffc107', '#dc3545']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

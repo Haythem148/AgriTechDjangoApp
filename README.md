@@ -1,2 +1,2 @@
-# AgriTechDjangoApp
+# AgriTech
  

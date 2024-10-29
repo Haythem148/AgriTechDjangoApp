@@ -1,0 +1,142 @@
+{% extends 'farms/base.html' %}
+
+{% block title %}Farms{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <div class="container">
+        <h1 class="text-center">Farm Management</h1>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2><i class="bi bi-grid"></i> Your Farms</h2>
+            <a href="{% url 'farms:farm-create' %}" class="btn btn-success">
+                <i class="bi bi-plus-circle"></i> Add New Farm
+            </a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control" placeholder="Search farms...">
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card stats-card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-graph-up"></i> Farm Statistics
+                </h5>
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        Total Farms
+                        <span class="badge bg-primary rounded-pill">{{ farms.count }}</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        Total Area
+                        <span class="badge bg-success rounded-pill">{{ total_area }} ha</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        Active Crops
+                        <span class="badge bg-info rounded-pill">{{ total_crops }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for farm in farms %}
+    <div class="col">
+        <!-- {{ farm|pprint }} -->  {# Uncomment this line temporarily for debugging #}
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="card-title">{{ farm.name }}</h5>
+                    <span class="badge bg-success">Active</span>
+                </div>
+                <p class="card-text">
+                    <i class="bi bi-geo-alt text-primary"></i> {{ farm.location }}<br>
+                    <i class="bi bi-arrows-angle-expand text-success"></i> {{ farm.area }} hectares<br>
+                    <i class="bi bi-tree text-success"></i> {{ farm.crops.count }} Crops
+                </p>
+                <div class="progress mb-3">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: 75%">
+                        Soil Health: 75%
+                    </div>
+                </div>
+                <div class="d-grid gap-2">
+                    <a href="{% url 'farms:farm-detail' farm.pk %}" class="btn btn-primary">
+                        <i class="bi bi-eye"></i> View Details
+                    </a>
+                </div>
+                <p>Farm PK: {{ farm.pk }}</p>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="bi bi-emoji-frown display-1 text-muted"></i>
+                <h3 class="mt-3">No farms found</h3>
+                <p class="text-muted">Start by adding your first farm!</p>
+                <a href="{% url 'farms:farm-create' %}" class="btn btn-success">
+                    <i class="bi bi-plus-circle"></i> Add New Farm
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% if is_paginated %}
+<nav aria-label="Page navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        </li>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+        <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+        </li>
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Add any custom JavaScript here
+    document.addEventListener('DOMContentLoaded', function() {
+        // Example: Add smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}

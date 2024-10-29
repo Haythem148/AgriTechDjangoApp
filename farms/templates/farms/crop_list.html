@@ -1,0 +1,84 @@
+{% extends 'farms/base.html' %}
+
+{% block title %}Crops{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <div class="container">
+        <h1 class="text-center">Crop Management</h1>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Crops at {{ farm.name }}</h2>
+        <a href="{% url 'farms:crop-create' farm_pk=farm.pk %}" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Add New Crop
+        </a>
+    </div>
+
+    <div class="row">
+        {% for crop in crops %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ crop.name }}</h5>
+                    <span class="badge bg-{{ crop.status|lower }}">{{ crop.status }}</span>
+                    <p class="card-text mt-3">
+                        <strong>Type:</strong> {{ crop.get_crop_type_display }}<br>
+                        <strong>Area:</strong> {{ crop.area }} hectares<br>
+                        <strong>Planting Date:</strong> {{ crop.planting_date }}<br>
+                        <strong>Expected Harvest:</strong> {{ crop.expected_harvest_date }}
+                    </p>
+                    <div class="d-flex justify-content-between mt-3">
+                        <a href="{% url 'farms:crop-detail' pk=crop.pk %}" class="btn btn-primary">
+                            <i class="bi bi-eye"></i> View
+                        </a>
+                        <a href="{% url 'farms:crop-update' pk=crop.pk %}" class="btn btn-warning">
+                            <i class="bi bi-pencil"></i> Edit
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                No crops found. Start by adding a new crop!
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if is_paginated %}
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+            <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+            </li>
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+
+<!-- Example usage with API key -->
+<script async
+    src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap">
+</script>
+{% endblock %}
