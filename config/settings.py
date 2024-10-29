@@ -7,7 +7,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'dechets',  # Ou simplement 'dechets'
-    'farms',  # ou 'exploitation' selon votre nom d'app
+    'farms',
+    'pesticides' # ou 'exploitation' selon votre nom d'app
 ] 
 
 TEMPLATES = [

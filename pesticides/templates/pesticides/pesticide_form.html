@@ -1,0 +1,90 @@
+{% extends 'pesticides/base.html' %}
+
+{% block title %}
+    {% if form.instance.pk %}
+        Modifier {{ form.instance.nom }}
+    {% else %}
+        Nouveau Pesticide
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">
+                        {% if form.instance.pk %}
+                            <i class="bi bi-pencil"></i> Modifier le Pesticide
+                        {% else %}
+                            <i class="bi bi-plus-circle"></i> Nouveau Pesticide
+                        {% endif %}
+                    </h2>
+
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.nom.id_for_label }}" class="form-label">
+                                <i class="bi bi-tag"></i> Nom
+                            </label>
+                            {{ form.nom.errors }}
+                            {{ form.nom }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.type_pesticide.id_for_label }}" class="form-label">
+                                <i class="bi bi-shield"></i> Type de Pesticide
+                            </label>
+                            {{ form.type_pesticide.errors }}
+                            {{ form.type_pesticide }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.type_culture.id_for_label }}" class="form-label">
+                                <i class="bi bi-flower1"></i> Type de Culture
+                            </label>
+                            {{ form.type_culture.errors }}
+                            {{ form.type_culture }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.composition.id_for_label }}" class="form-label">
+                                <i class="bi bi-file-text"></i> Composition
+                            </label>
+                            {{ form.composition.errors }}
+                            {{ form.composition }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.dose_recommandee.id_for_label }}" class="form-label">
+                                <i class="bi bi-droplet"></i> Dose Recommandée (L/ha)
+                            </label>
+                            {{ form.dose_recommandee.errors }}
+                            {{ form.dose_recommandee }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.delai_reentree.id_for_label }}" class="form-label">
+                                <i class="bi bi-clock"></i> Délai de Réentrée (heures)
+                            </label>
+                            {{ form.delai_reentree.errors }}
+                            {{ form.delai_reentree }}
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> Enregistrer
+                            </button>
+                            <a href="{% url 'pesticides:pesticide-list' %}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Annuler
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

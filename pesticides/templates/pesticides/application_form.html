@@ -1,0 +1,87 @@
+{% extends 'pesticides/base.html' %}
+
+{% block title %}{% if form.instance.pk %}Modifier{% else %}Nouvelle{% endif %} Application de Pesticide{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <div class="container">
+        <h1 class="text-center">
+            {% if form.instance.pk %}
+                Modifier l'Application de Pesticide
+            {% else %}
+                Nouvelle Application de Pesticide
+            {% endif %}
+        </h1>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'pesticides:application-list' %}">Applications</a></li>
+                    <li class="breadcrumb-item active">
+                        {% if form.instance.pk %}Modifier{% else %}Nouvelle{% endif %}
+                    </li>
+                </ol>
+            </nav>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.farm.id_for_label }}" class="form-label">
+                                <i class="bi bi-building"></i> Exploitation
+                            </label>
+                            {{ form.farm.errors }}
+                            {{ form.farm }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.pesticide.id_for_label }}" class="form-label">
+                                <i class="bi bi-shield"></i> Pesticide
+                            </label>
+                            {{ form.pesticide.errors }}
+                            {{ form.pesticide }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.date_application.id_for_label }}" class="form-label">
+                                <i class="bi bi-calendar"></i> Date d'Application
+                            </label>
+                            {{ form.date_application.errors }}
+                            {{ form.date_application }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.quantite.id_for_label }}" class="form-label">
+                                <i class="bi bi-droplet"></i> Quantité (L)
+                            </label>
+                            {{ form.quantite.errors }}
+                            {{ form.quantite }}
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'pesticides:application-list' %}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Retour
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                {% if form.instance.pk %}
+                                    <i class="bi bi-check-circle"></i> Mettre à jour
+                                {% else %}
+                                    <i class="bi bi-plus-circle"></i> Créer
+                                {% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
