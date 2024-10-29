@@ -1,0 +1,77 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Tableau de bord{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-5">
+        <i class="bi bi-grid-3x3-gap-fill me-2"></i>
+        Tableau de bord AgriTech
+    </h1>
+    
+    <div class="row g-4">
+        <!-- Farms Module -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 module-card">
+                <div class="card-body text-center">
+                    <div class="icon-wrapper mb-3">
+                        <i class="bi bi-house-fill text-success display-4"></i>
+                    </div>
+                    <h5 class="card-title">Gestion des Fermes</h5>
+                    <p class="card-text">Gérez vos fermes et leurs informations</p>
+                    <a href="{% url 'farms:farm-list' %}" class="btn btn-success w-100">                        <i class="bi bi-arrow-right-circle me-2"></i>Accéder
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fertilizer Module -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 module-card">
+                <div class="card-body text-center">
+                    <div class="icon-wrapper mb-3">
+                        <i class="bi bi-water text-success display-4"></i>
+                    </div>
+                    <h5 class="card-title">Gestion des Engrais</h5>
+                    <p class="card-text">Suivez l'utilisation des engrais</p>
+                    <a href="{% url 'gestionEngrais:engrais-list' %}" class="btn btn-success w-100">
+                        <i class="bi bi-arrow-right-circle me-2"></i>Accéder
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pesticides Module -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 module-card">
+                <div class="card-body text-center">
+                    <div class="icon-wrapper mb-3">
+                        <i class="bi bi-bug-fill text-success display-4"></i>
+                    </div>
+                    <h5 class="card-title">Gestion des Pesticides</h5>
+                    <p class="card-text">Gérez vos pesticides et traitements</p>
+                    <a href="{% url 'pesticides:pesticide-list' %}" class="btn btn-success w-100">
+                        <i class="bi bi-arrow-right-circle me-2"></i>Accéder
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Waste Module -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 module-card">
+                <div class="card-body text-center">
+                    <div class="icon-wrapper mb-3">
+                        <i class="bi bi-recycle text-success display-4"></i>
+                    </div>
+                    <h5 class="card-title">Gestion des Déchets</h5>
+                    <p class="card-text">Suivez et gérez vos déchets</p>
+                    <a href="{% url 'dechets:type-dechet-list' %}" class="btn btn-success w-100">
+                        <i class="bi bi-arrow-right-circle me-2"></i>Accéder
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

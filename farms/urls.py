@@ -4,6 +4,8 @@ from . import views
 app_name = 'farms'
 
 urlpatterns = [
+    
+
     # Farm URLs
     path('', views.FarmListView.as_view(), name='farm-list'),
     path('farms/<int:pk>/', views.FarmDetailView.as_view(), name='farm-detail'),

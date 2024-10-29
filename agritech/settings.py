@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
     'gestionEngrais',
+    'dashboard.apps.DashboardConfig',
+    
 ]
 
 REST_FRAMEWORK = {
