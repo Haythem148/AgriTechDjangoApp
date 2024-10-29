@@ -1,0 +1,36 @@
+{% extends 'gestionEngrais/base.html' %}
+
+{% block title %}Fertilizer Applications{% endblock %}
+
+{% block content %}
+<div class="mt-4">
+    <h2>engrais Applications</h2>
+    <a href="{% url 'application-engrais-create' %}" class="btn btn-success mb-3">
+        <i class="bi bi-plus-circle"></i> Add New Application
+    </a>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>engrais</th>
+                <th>Date</th>
+                <th>Quantity (kg)</th>
+                <th>Optimisation AI</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for application in applications %}
+            <tr>
+                <td>{{ application.engrais.nom }}</td>
+                <td>{{ application.date }}</td>
+                <td>{{ application.quantite }}</td>
+                <td>{{ application.ia }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="text-center">No applications found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'gestionEngrais/base.html' %}
+
+{% block title %}Engrais{% endblock %}
+
+{% block content %}
+<div class="mt-4">
+    <h2>Engrais</h2>
+    <a href="{% url 'engrais-create' %}" class="btn btn-success mb-3">
+        <i class="bi bi-plus-circle"></i> Add New engrais
+    </a>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Composition</th>
+                <th>Recommended Dose (kg/ha)</th>
+                <th>Soil Type</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for engrais in engrais %}
+            <tr>
+                <td>{{ engrais.nom }}</td>
+                <td>{{ engrais.composition }}</td>
+                <td>{{ engrais.recommandation_dose }}</td>
+                <td>{{ engrais.type_sol }}</td>
+                <td>
+                    <a href="{% url 'engrais-update' engrais.pk %}" class="btn btn-warning btn-sm">
+                        <i class="bi bi-pencil"></i> Edit
+                    </a>
+                    <a href="{% url 'engrais-delete' engrais.pk %}" class="btn btn-danger btn-sm">
+                        <i class="bi bi-trash"></i> Delete
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center">No Engrais found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
