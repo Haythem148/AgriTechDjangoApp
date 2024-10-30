@@ -5,10 +5,13 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Count, Avg, Sum
 from django.utils import timezone
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
 from .models import Pesticide, Application
 from .forms import PesticideForm, ApplicationForm
+import numpy as np
 
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.preprocessing import StandardScaler
+import pandas as pd
 # Create your views here.
 
 class PesticideListView(ListView):
@@ -112,3 +115,49 @@ class ApplicationDetailView(DetailView):
     model = Application
     template_name = 'pesticides/application_detail.html'
     context_object_name = 'application'
+
+    def get_context_data(self, **kwargs):  # Use **kwargs to unpack keyword arguments
+        context = super().get_context_data(**kwargs)  # Pass **kwargs to super()
+        application = self.get_object()
+
+        # Read historical data from CSV
+        historical_apps = pd.read_csv('pesticides/static/Nasa_Pesticide.csv')
+
+        # Prepare features and target
+        X = []
+        y = []
+
+        for index, app in historical_apps.iterrows():
+            X.append([
+                app['dose_recommandee'],
+                app['area'],
+                float(app['type_pesticide'] == application.pesticide.type_pesticide),
+                float(app['type_culture'] == application.pesticide.type_culture)
+            ])
+            y.append(app['quantite'])
+
+        X = np.array(X)
+        y = np.array(y)
+
+        # Normalize the data
+        scaler = StandardScaler()
+        X = scaler.fit_transform(X)
+
+        # Train the model
+        model = RandomForestRegressor(n_estimators=100, random_state=42)
+        model.fit(X, y)
+
+        # Prepare input features for the current application
+        input_features = np.array([[ 
+            application.pesticide.dose_recommandee,
+            application.farm.area,
+            1.0,  # Same pesticide type
+            1.0   # Same culture type
+        ]])
+        input_features = scaler.transform(input_features)
+
+        # Predict the quantity using the trained model
+        predicted_quantity = model.predict(input_features)[0]
+        context['ai_prediction'] = round(predicted_quantity, 2)
+
+        return context

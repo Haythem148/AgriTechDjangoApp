@@ -32,6 +32,10 @@
 
                         <dt class="col-sm-4">Quantité</dt>
                         <dd class="col-sm-8">{{ application.quantite }} L</dd>
+                        {% if ai_prediction %}
+                        <dt class="col-sm-4">Prédiction IA</dt>
+                        <dd class="col-sm-8">{{ ai_prediction }} L</dd>
+                        {% endif %}
                     </dl>
                 </div>
             </div>
