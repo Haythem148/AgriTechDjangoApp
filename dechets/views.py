@@ -54,6 +54,30 @@ class PlanGestionDechetsListView(ListView):
     template_name = 'dechets/plan_gestion_list.html'
     context_object_name = 'plans'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        ai_model = WasteManagementAI()
+        
+        for plan in context['plans']:
+            waste_type = plan.type_dechet
+            recommended_method = ai_model.recommend_treatment_method(
+                waste_type.nom,
+                plan.quantite,
+                waste_type.biodegradable
+            )
+            efficiency = ai_model.predict_treatment_efficiency(
+                waste_type.nom,
+                recommended_method[0],
+                plan.quantite,
+                {}
+            )
+            plan.ai_recommendation = {
+                'method': recommended_method[0],
+                'efficiency': efficiency
+            }
+            
+        return context
+
 class PlanGestionDechetsCreateView(SuccessMessageMixin, CreateView):
     model = PlanGestionDechets
     form_class = PlanGestionDechetsForm
@@ -64,23 +88,36 @@ class PlanGestionDechetsCreateView(SuccessMessageMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.POST:
-            ai_model = WasteManagementAI()
-            waste_type = self.request.POST.get('type_dechet')
-            quantity = float(self.request.POST.get('quantite', 0))
-            
-            context['ai_recommendations'] = {
-                'recommended_method': ai_model.recommend_treatment_method(
-                    waste_type,
+            try:
+                ai_model = WasteManagementAI()
+                waste_type_id = self.request.POST.get('type_dechet')
+                quantity = float(self.request.POST.get('quantite', 0))
+                
+                # Get waste type object
+                waste_type = TypeDechet.objects.get(id=waste_type_id)
+                
+                # Get AI recommendations
+                recommended_method = ai_model.recommend_treatment_method(
+                    waste_type.nom,
                     quantity,
-                    self.get_biodegradable_status(waste_type)
-                ),
-                'predicted_efficiency': ai_model.predict_treatment_efficiency(
-                    waste_type,
-                    self.request.POST.get('methode_traitement'),
-                    quantity,
-                    self.get_current_conditions()
+                    waste_type.biodegradable
                 )
-            }
+                
+                efficiency = ai_model.predict_treatment_efficiency(
+                    waste_type.nom,
+                    recommended_method[0],
+                    quantity,
+                    {}
+                )
+                
+                context['ai_recommendations'] = {
+                    'recommended_method': recommended_method[0],
+                    'predicted_efficiency': efficiency,
+                    'is_biodegradable': waste_type.biodegradable
+                }
+                
+            except Exception as e:
+                print(f"Error in AI recommendations: {e}")
         return context
 
 class PlanGestionDechetsUpdateView(SuccessMessageMixin, UpdateView):
@@ -100,3 +137,35 @@ class PlanGestionDechetsDetailView(DetailView):
     model = PlanGestionDechets
     template_name = 'dechets/plan_gestion_detail.html'
     context_object_name = 'plan'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        try:
+            ai_model = WasteManagementAI()
+            plan = self.object
+            
+            # Get AI recommendations
+            recommended_method = ai_model.recommend_treatment_method(
+                plan.type_dechet.nom,
+                plan.quantite,
+                plan.type_dechet.biodegradable
+            )
+            
+            efficiency = ai_model.predict_treatment_efficiency(
+                plan.type_dechet.nom,
+                recommended_method[0],
+                plan.quantite,
+                {}
+            )
+            
+            context['ai_analysis'] = {
+                'recommended_method': recommended_method[0],
+                'predicted_efficiency': efficiency,
+                'is_biodegradable': plan.type_dechet.biodegradable,
+                'current_method': plan.type_dechet.get_methode_traitement_display(),
+                'current_efficiency': plan.type_dechet.efficacite_traitement
+            }
+            
+        except Exception as e:
+            print(f"Error in AI analysis: {e}")
+        return context

@@ -56,9 +56,15 @@
                         <small class="text-muted">Quantité</small>
                         <p class="mb-0"><i class="bi bi-calculator"></i> {{ plan.quantite }} kg</p>
                     </div>
-                    <div>
-                        <small class="text-muted">Date</small>
-                        <p class="mb-0"><i class="bi bi-calendar"></i> {{ plan.date }}</p>
+                    <div class="alert alert-info mb-0">
+                        <h6 class="alert-heading"><i class="bi bi-robot"></i> IA Suggestions</h6>
+                        <p class="mb-1"><strong>Méthode:</strong> {{ plan.type_dechet.methode_traitement }}</p>
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar bg-success" role="progressbar" 
+                                 style="width: {{ plan.type_dechet.efficacite_traitement }}%">
+                                {{ plan.type_dechet.efficacite_traitement }}% Efficace
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="card-footer bg-white border-top">
