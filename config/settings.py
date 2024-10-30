@@ -10,7 +10,9 @@ INSTALLED_APPS = [
     'farms',
     'pesticides' # ou 'exploitation' selon votre nom d'app
 ] 
-
+LOGIN_URL = 'dashboard:login'
+LOGIN_REDIRECT_URL = 'dashboard:home'
+LOGOUT_REDIRECT_URL = 'dashboard:login'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

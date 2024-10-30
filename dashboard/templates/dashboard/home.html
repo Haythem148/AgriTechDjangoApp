@@ -3,75 +3,269 @@
 {% block title %}Tableau de bord{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <h1 class="text-center mb-5">
-        <i class="bi bi-grid-3x3-gap-fill me-2"></i>
-        Tableau de bord AgriTech
-    </h1>
-    
-    <div class="row g-4">
-        <!-- Farms Module -->
-        <div class="col-md-6 col-lg-3">
-            <div class="card h-100 module-card">
-                <div class="card-body text-center">
-                    <div class="icon-wrapper mb-3">
-                        <i class="bi bi-house-fill text-success display-4"></i>
+<div class="dashboard-wrapper">
+    <!-- Top Stats Section -->
+    <div class="container mb-4">
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bi bi-buildings"></i>
                     </div>
-                    <h5 class="card-title">Gestion des Fermes</h5>
-                    <p class="card-text">Gérez vos fermes et leurs informations</p>
-                    <a href="{% url 'farms:farm-list' %}" class="btn btn-success w-100">                        <i class="bi bi-arrow-right-circle me-2"></i>Accéder
-                    </a>
+                    <div class="stat-info">
+                        <h3>12</h3>
+                        <p>Total Farms</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon green">
+                        <i class="bi bi-droplet"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>845</h3>
+                        <p>Active Crops</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon blue">
+                        <i class="bi bi-calendar3"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>24</h3>
+                        <p>Pending Tasks</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon purple">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>92%</h3>
+                        <p>Efficiency</p>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Fertilizer Module -->
-        <div class="col-md-6 col-lg-3">
-            <div class="card h-100 module-card">
-                <div class="card-body text-center">
-                    <div class="icon-wrapper mb-3">
-                        <i class="bi bi-water text-success display-4"></i>
+    <!-- Main Modules Grid -->
+    <div class="container py-4">
+        <h1 class="dashboard-title text-center mb-5">
+            <i class="bi bi-grid-3x3-gap-fill me-2"></i>
+            Tableau de bord AgriTech
+        </h1>
+        
+        <div class="row g-4">
+            <!-- Farms Module -->
+            <div class="col-md-6 col-lg-3">
+                <div class="module-card farms">
+                    <div class="module-icon">
+                        <i class="bi bi-house-fill"></i>
                     </div>
-                    <h5 class="card-title">Gestion des Engrais</h5>
-                    <p class="card-text">Suivez l'utilisation des engrais</p>
-                    <a href="{% url 'gestionEngrais:engrais-list' %}" class="btn btn-success w-100">
-                        <i class="bi bi-arrow-right-circle me-2"></i>Accéder
+                    <h5>Gestion des Fermes</h5>
+                    <p>Gérez vos fermes et leurs informations</p>
+                    <a href="{% url 'farms:farm-list' %}" class="module-btn">
+                        <span>Accéder</span>
+                        <i class="bi bi-arrow-right"></i>
                     </a>
                 </div>
             </div>
-        </div>
 
-        <!-- Pesticides Module -->
-        <div class="col-md-6 col-lg-3">
-            <div class="card h-100 module-card">
-                <div class="card-body text-center">
-                    <div class="icon-wrapper mb-3">
-                        <i class="bi bi-bug-fill text-success display-4"></i>
+            <!-- Fertilizer Module -->
+            <div class="col-md-6 col-lg-3">
+                <div class="module-card fertilizer">
+                    <div class="module-icon">
+                        <i class="bi bi-water"></i>
                     </div>
-                    <h5 class="card-title">Gestion des Pesticides</h5>
-                    <p class="card-text">Gérez vos pesticides et traitements</p>
-                    <a href="{% url 'pesticides:pesticide-list' %}" class="btn btn-success w-100">
-                        <i class="bi bi-arrow-right-circle me-2"></i>Accéder
+                    <h5>Gestion des Engrais</h5>
+                    <p>Suivez l'utilisation des engrais</p>
+                    <a href="{% url 'gestionEngrais:engrais-list' %}" class="module-btn">
+                        <span>Accéder</span>
+                        <i class="bi bi-arrow-right"></i>
                     </a>
                 </div>
             </div>
-        </div>
 
-        <!-- Waste Module -->
-        <div class="col-md-6 col-lg-3">
-            <div class="card h-100 module-card">
-                <div class="card-body text-center">
-                    <div class="icon-wrapper mb-3">
-                        <i class="bi bi-recycle text-success display-4"></i>
+            <!-- Pesticides Module -->
+            <div class="col-md-6 col-lg-3">
+                <div class="module-card pesticides">
+                    <div class="module-icon">
+                        <i class="bi bi-bug-fill"></i>
                     </div>
-                    <h5 class="card-title">Gestion des Déchets</h5>
-                    <p class="card-text">Suivez et gérez vos déchets</p>
-                    <a href="{% url 'dechets:type-dechet-list' %}" class="btn btn-success w-100">
-                        <i class="bi bi-arrow-right-circle me-2"></i>Accéder
+                    <h5>Gestion des Pesticides</h5>
+                    <p>Gérez vos pesticides et traitements</p>
+                    <a href="{% url 'pesticides:pesticide-list' %}" class="module-btn">
+                        <span>Accéder</span>
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Waste Management Module -->
+            <div class="col-md-6 col-lg-3">
+                <div class="module-card waste">
+                    <div class="module-icon">
+                        <i class="bi bi-recycle"></i>
+                    </div>
+                    <h5>Gestion des Déchets</h5>
+                    <p>Suivez et gérez vos déchets</p>
+                    <a href="{% url 'dechets:type-dechet-list' %}" class="module-btn">
+                        <span>Accéder</span>
+                        <i class="bi bi-arrow-right"></i>
                     </a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .dashboard-wrapper {
+        min-height: calc(100vh - 72px);
+        background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)),
+                    url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80') center/cover fixed;
+        padding: 2rem 0;
+    }
+
+    .dashboard-title {
+        color: #2E7D32;
+        font-weight: 700;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* Stats Cards */
+    .stat-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .stat-icon {
+        background: rgba(46, 125, 50, 0.1);
+        color: #2E7D32;
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+    }
+
+    .stat-icon.green { background: rgba(46, 125, 50, 0.1); color: #2E7D32; }
+    .stat-icon.blue { background: rgba(33, 150, 243, 0.1); color: #2196F3; }
+    .stat-icon.purple { background: rgba(156, 39, 176, 0.1); color: #9C27B0; }
+
+    .stat-info h3 {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #2c3e50;
+    }
+
+    .stat-info p {
+        margin: 0;
+        color: #7f8c8d;
+        font-size: 0.9rem;
+    }
+
+    /* Module Cards */
+    .module-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .module-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(45deg, rgba(46, 125, 50, 0.05), rgba(56, 142, 60, 0.05));
+        z-index: 0;
+    }
+
+    .module-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    }
+
+    .module-icon {
+        width: 80px;
+        height: 80px;
+        background: rgba(46, 125, 50, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 2rem;
+        color: #2E7D32;
+        position: relative;
+        z-index: 1;
+    }
+
+    .module-card h5 {
+        color: #2c3e50;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .module-card p {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .module-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: linear-gradient(135deg, #2E7D32, #388E3C);
+        color: white;
+        text-decoration: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        position: relative;
+        z-index: 1;
+    }
+
+    .module-btn:hover {
+        background: linear-gradient(135deg, #1B5E20, #2E7D32);
+        color: white;
+        transform: translateX(5px);
+    }
+
+    .module-card.farms .module-icon { background: rgba(46, 125, 50, 0.1); color: #2E7D32; }
+    .module-card.fertilizer .module-icon { background: rgba(33, 150, 243, 0.1); color: #2196F3; }
+    .module-card.pesticides .module-icon { background: rgba(233, 30, 99, 0.1); color: #E91E63; }
+    .module-card.waste .module-icon { background: rgba(156, 39, 176, 0.1); color: #9C27B0; }
+</style>
 {% endblock %} 
