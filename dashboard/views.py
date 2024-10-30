@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
+from .forms import CustomUserCreationForm
 
 def login_view(request):
     if request.user.is_authenticated:
@@ -31,3 +32,18 @@ def logout_view(request):
     logout(request)
     messages.info(request, 'You have been logged out successfully.')
     return redirect('dashboard:login')
+
+def register_view(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard:home')
+        
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, f'Account created successfully! Welcome, {user.username}!')
+            return redirect('dashboard:home')
+    else:
+        form = CustomUserCreationForm()
+    return render(request, 'dashboard/register.html', {'form': form})

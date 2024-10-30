@@ -9,6 +9,7 @@ class AuthenticationMiddleware:
         # List of URLs that don't require authentication
         exempt_urls = [
             reverse('dashboard:login'),
+            reverse('dashboard:register'),
         ]
 
         if not request.user.is_authenticated and request.path not in exempt_urls:
