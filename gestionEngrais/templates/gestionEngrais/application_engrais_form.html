@@ -1,6 +1,6 @@
 {% extends 'gestionEngrais/base.html' %}
 
-{% block title %}New Application{% endblock %}
+{% block title %}{% if form.instance.pk %}Modifier{% else %}Nouvelle{% endif %} Application d'Engrais{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
@@ -8,39 +8,56 @@
         <div class="card shadow-sm">
             <div class="card-body">
                 <h4 class="card-title mb-4">
-                    <i class="bi bi-calendar-plus"></i> New Fertilizer Application
+                    <i class="bi bi-calendar-plus"></i> 
+                    {% if form.instance.pk %}Modifier{% else %}Nouvelle{% endif %} Application d'Engrais
                 </h4>
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
                 <form method="post" novalidate>
                     {% csrf_token %}
+                    
                     <div class="mb-3">
-                        <label for="{{ form.engrais.id_for_label }}" class="form-label">Fertilizer</label>
+                        <label for="{{ form.engrais.id_for_label }}" class="form-label">Engrais</label>
                         {{ form.engrais.errors }}
                         {{ form.engrais }}
                     </div>
+
                     <div class="mb-3">
-                        <label for="{{ form.date.id_for_label }}" class="form-label">Application Date</label>
+                        <label for="{{ form.date.id_for_label }}" class="form-label">Date d'application</label>
                         {{ form.date.errors }}
-                        <input type="date" name="{{ form.date.name }}" 
-                               class="form-control {% if form.date.errors %}is-invalid{% endif %}"
-                               value="{{ form.date.value|date:'Y-m-d'|default:'' }}">
+                        {{ form.date }}
                     </div>
+
                     <div class="mb-3">
-                        <label for="{{ form.quantite.id_for_label }}" class="form-label">Quantity (kg)</label>
+                        <label for="{{ form.quantite.id_for_label }}" class="form-label">Quantité (kg/ha)</label>
                         {{ form.quantite.errors }}
-                        <input type="number" step="0.01" name="{{ form.quantite.name }}" 
-                               class="form-control {% if form.quantite.errors %}is-invalid{% endif %}"
-                               value="{{ form.quantite.value|default:'' }}">
+                        {{ form.quantite }}
                     </div>
+
                     <div class="mb-3">
-                        <label for="{{ form.ia.id_for_label }}" class="form-label">AI Optimization Notes</label>
+                        <label for="{{ form.ia.id_for_label }}" class="form-label">Notes d'optimisation IA</label>
                         {{ form.ia.errors }}
-                        <textarea name="{{ form.ia.name }}" 
-                                  class="form-control {% if form.ia.errors %}is-invalid{% endif %}"
-                                  rows="3">{{ form.ia.value|default:'' }}</textarea>
+                        {{ form.ia }}
+                        <small class="form-text text-muted">
+                            Ajoutez des notes sur l'optimisation ou les recommandations de l'IA
+                        </small>
                     </div>
+
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <a href="{% url 'gestionEngrais:application-list' %}" class="btn btn-secondary me-md-2">Cancel</a>
-                        <button type="submit" class="btn btn-primary">Save Application</button>
+                        <a href="{% url 'gestionEngrais:application-list' %}" class="btn btn-secondary me-md-2">
+                            <i class="bi bi-x-circle"></i> Annuler
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> 
+                            {% if form.instance.pk %}Modifier{% else %}Enregistrer{% endif %}
+                        </button>
                     </div>
                 </form>
             </div>
