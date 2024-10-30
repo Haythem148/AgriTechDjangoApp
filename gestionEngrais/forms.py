@@ -107,7 +107,7 @@ class EngraisForm(forms.ModelForm):
 class ApplicationEngraisForm(forms.ModelForm):
     class Meta:
         model = ApplicationEngrais
-        fields = ['engrais', 'date', 'quantite', 'ia']
+        fields = ['engrais', 'date', 'quantite']
         widgets = {
             'engrais': forms.Select(attrs={'class': 'form-control'}),
             'date': forms.DateInput(attrs={
@@ -118,11 +118,6 @@ class ApplicationEngraisForm(forms.ModelForm):
                 'class': 'form-control',
                 'min': '0',
                 'step': '0.1'
-            }),
-            'ia': forms.Textarea(attrs={
-                'class': 'form-control',
-                'rows': 3,
-                'placeholder': 'Notes sur l\'optimisation IA...'
             })
         }
 

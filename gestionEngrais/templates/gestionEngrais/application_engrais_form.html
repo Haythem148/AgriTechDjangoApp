@@ -41,14 +41,7 @@
                         {{ form.quantite }}
                     </div>
 
-                    <div class="mb-3">
-                        <label for="{{ form.ia.id_for_label }}" class="form-label">Notes d'optimisation IA</label>
-                        {{ form.ia.errors }}
-                        {{ form.ia }}
-                        <small class="form-text text-muted">
-                            Ajoutez des notes sur l'optimisation ou les recommandations de l'IA
-                        </small>
-                    </div>
+                    
 
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                         <a href="{% url 'gestionEngrais:application-list' %}" class="btn btn-secondary me-md-2">

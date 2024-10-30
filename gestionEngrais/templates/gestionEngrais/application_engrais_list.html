@@ -29,7 +29,6 @@
                 <p class="card-text">
                     <i class="bi bi-calendar-date text-primary"></i> {{ application.date }}<br>
                     <i class="bi bi-box-seam text-success"></i> {{ application.quantite }} kg<br>
-                    <i class="bi bi-robot text-info"></i> {{ application.ia|truncatechars:100 }}
                 </p>
                 <div class="d-flex justify-content-between mt-3">
                     <a href="{% url 'gestionEngrais:application-update' application.id %}" class="btn btn-warning">

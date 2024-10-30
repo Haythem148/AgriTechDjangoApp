@@ -24,7 +24,6 @@ class ApplicationEngrais(models.Model):
     engrais = models.ForeignKey(Engrais, on_delete=models.CASCADE)
     date = models.DateField()
     quantite = models.FloatField(validators=[MinValueValidator(0.0)])
-    ia = models.TextField(verbose_name="AI Optimization")
 
     class Meta:
         verbose_name = "Application d'engrais"
@@ -37,7 +36,6 @@ class ApplicationEngrais(models.Model):
     engrais = models.ForeignKey(Engrais, on_delete=models.CASCADE)
     date = models.DateField()
     quantite = models.FloatField(validators=[MinValueValidator(0.0)])
-    ia = models.TextField(verbose_name="AI Optimization")
 
     class Meta:
         verbose_name = "Application d'engrais"
