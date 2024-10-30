@@ -3,6 +3,9 @@ from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Sum
 from django.contrib import messages
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+import json
 from .models import Engrais, ApplicationEngrais
 from .forms import EngraisForm, ApplicationEngraisForm
 
@@ -69,3 +72,31 @@ class ApplicationEngraisDeleteView(SuccessMessageMixin, DeleteView):  # Added Su
     def delete(self, request, *args, **kwargs):  # Add this method to show success message
         messages.success(self.request, self.success_message)
         return super().delete(request, *args, **kwargs)
+
+@require_POST
+def calculate_dose(request):
+    try:
+        nom = request.POST.get('nom')
+        composition = request.POST.get('composition')
+        type_sol = request.POST.get('type_sol')
+        
+        if not all([nom, composition, type_sol]):
+            return JsonResponse({
+                'error': 'Tous les champs sont requis',
+                'dose': 100.0  # Valeur par défaut
+            }, status=200)
+            
+        form = EngraisForm()
+        dose = form.get_ia_recommendation(nom, composition, type_sol)
+        
+        return JsonResponse({
+            'dose': dose,
+            'message': 'Dose calculée avec succès'
+        })
+    except Exception as e:
+        # Utiliser la méthode de secours en cas d'erreur
+        fallback_dose = form.calculate_fallback_dose(composition, type_sol)
+        return JsonResponse({
+            'dose': fallback_dose,
+            'message': 'Calcul de secours utilisé'
+        }, status=200)

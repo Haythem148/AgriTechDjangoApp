@@ -4,7 +4,10 @@ from django.db import models
 class Engrais(models.Model):
     nom = models.CharField(max_length=255)
     composition = models.CharField(max_length=255)
-    recommandation_dose = models.FloatField(validators=[MinValueValidator(0.0)])
+    recommandation_dose = models.FloatField(
+        validators=[MinValueValidator(0.0)],
+        default=100.0  # Valeur par défaut
+    )
     type_sol = models.CharField(max_length=100)
 
     class Meta:
