@@ -49,6 +49,7 @@ class TypeDechetDeleteView(SuccessMessageMixin, DeleteView):
     success_message = "Type de déchet supprimé avec succès!"
 
 # Vues pour PlanGestionDechets
+
 class PlanGestionDechetsListView(ListView):
     model = PlanGestionDechets
     template_name = 'dechets/plan_gestion_list.html'
@@ -57,27 +58,32 @@ class PlanGestionDechetsListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         ai_model = WasteManagementAI()
-        
+
         for plan in context['plans']:
             waste_type = plan.type_dechet
+            quantity = plan.quantite  # Assurez-vous que cette valeur est correctement définie
+            biodegradable = waste_type.biodegradable
+            temperature = 20  # Remplacez par la valeur appropriée, ou récupérez-la de votre modèle
+            humidity = 50  # Remplacez par la valeur appropriée, ou récupérez-la de votre modèle
+            
             recommended_method = ai_model.recommend_treatment_method(
-                waste_type.nom,
-                plan.quantite,
-                waste_type.biodegradable
+                quantity,
+                biodegradable,
+                temperature,
+                humidity
             )
             efficiency = ai_model.predict_treatment_efficiency(
-                waste_type.nom,
-                recommended_method[0],
-                plan.quantite,
-                {}
+                quantity,
+                biodegradable,
+                temperature,
+                humidity
             )
             plan.ai_recommendation = {
-                'method': recommended_method[0],
+                'method': recommended_method,
                 'efficiency': efficiency
             }
-            
-        return context
 
+        return context
 class PlanGestionDechetsCreateView(SuccessMessageMixin, CreateView):
     model = PlanGestionDechets
     form_class = PlanGestionDechetsForm
@@ -144,22 +150,27 @@ class PlanGestionDechetsDetailView(DetailView):
             ai_model = WasteManagementAI()
             plan = self.object
             
-            # Get AI recommendations
+            # Récupérer ou définir les valeurs de température et d'humidité
+            temperature = 20  # Exemple de valeur par défaut, remplacez par une valeur appropriée
+            humidity = 50  # Exemple de valeur par défaut, remplacez par une valeur appropriée
+            
+            # Obtenez les recommandations de l'IA
             recommended_method = ai_model.recommend_treatment_method(
-                plan.type_dechet.nom,
                 plan.quantite,
-                plan.type_dechet.biodegradable
+                plan.type_dechet.biodegradable,
+                temperature,
+                humidity
             )
             
             efficiency = ai_model.predict_treatment_efficiency(
-                plan.type_dechet.nom,
-                recommended_method[0],
                 plan.quantite,
-                {}
+                plan.type_dechet.biodegradable,
+                temperature,
+                humidity
             )
             
             context['ai_analysis'] = {
-                'recommended_method': recommended_method[0],
+                'recommended_method': recommended_method,
                 'predicted_efficiency': efficiency,
                 'is_biodegradable': plan.type_dechet.biodegradable,
                 'current_method': plan.type_dechet.get_methode_traitement_display(),
