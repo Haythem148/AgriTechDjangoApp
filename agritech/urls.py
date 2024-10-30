@@ -8,6 +8,7 @@ urlpatterns = [
     path('engrais/', include('gestionEngrais.urls')),
     path('pesticides/', include('pesticides.urls')),
     path('dechets/', include('dechets.urls')),
+    path('water-management/', include('water_management.urls')),
 
 
 ]

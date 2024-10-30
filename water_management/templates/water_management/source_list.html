@@ -1,0 +1,42 @@
+{% extends 'farms/base.html' %}
+
+{% block title %}Water Sources{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <div class="container">
+        <h1 class="text-center">Water Sources</h1>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <a href="{% url 'water_management:source_create' %}" class="btn btn-primary mb-3">
+        <i class="bi bi-plus-circle"></i> Add Water Source
+    </a>
+    <div class="row">
+        {% for source in sources %}
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ source.nom }}</h5>
+                        <p class="card-text">Type: {{ source.type }}<br>Capacity: {{ source.capacite }} L<br>Debit: {{ source.debit }} L/min</p>
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'water_management:source_update' source.pk %}" class="btn btn-warning">
+                                <i class="bi bi-pencil"></i> Edit
+                            </a>
+                            <a href="{% url 'water_management:source_delete' source.pk %}" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Delete
+                            </a>
+                            <a href="{% url 'water_management:source_detail' source.pk %}" class="btn btn-info">
+                                <i class="bi bi-eye"></i> View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

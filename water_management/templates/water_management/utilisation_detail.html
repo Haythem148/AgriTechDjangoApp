@@ -1,0 +1,27 @@
+{% extends 'farms/base.html' %}
+
+{% block title %}Utilisation Details{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <div class="container">
+        <h1 class="text-center">Utilisation Details</h1>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center"></h1>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Source: {{ utilisation.source_eau.nom }}</h5>
+            <p class="card-text">Quantity Used: {{ utilisation.quantite_utilisee }} L</p>
+            <p class="card-text">Date: {{ utilisation.date }}</p>
+            <a href="{% url 'water_management:utilisation_update' utilisation.pk %}" class="btn btn-warning">Edit</a>
+            <a href="{% url 'water_management:utilisation_delete' utilisation.pk %}" class="btn btn-danger">Delete</a>
+            <a href="{% url 'water_management:utilisation_list' %}" class="btn btn-secondary">Back to List</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

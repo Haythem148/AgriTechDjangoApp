@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'gestionEngrais',
     'dashboard.apps.DashboardConfig',
     
+    'water_management',
 ]
 
 REST_FRAMEWORK = {
