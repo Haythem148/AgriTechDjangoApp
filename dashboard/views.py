@@ -22,10 +22,11 @@ def login_view(request):
         form = AuthenticationForm()
     return render(request, 'dashboard/login.html', {'form': form})
 
-@login_required
+@login_required(login_url='dashboard:login')
 def home(request):
     return render(request, 'dashboard/home.html')
 
+@login_required(login_url='dashboard:login')
 def logout_view(request):
     logout(request)
     messages.info(request, 'You have been logged out successfully.')
