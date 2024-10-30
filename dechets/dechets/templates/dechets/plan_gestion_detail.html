@@ -1,0 +1,162 @@
+{% extends 'dechets/base.html' %}
+
+{% block title %}Plan de Gestion - {{ plan.farm }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="card-title mb-0">Détails du Plan</h2>
+                        <div>
+                            <a href="{% url 'dechets:plan-update' plan.pk %}" class="btn btn-primary">
+                                <i class="bi bi-pencil"></i> Modifier
+                            </a>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                <i class="bi bi-trash"></i> Supprimer
+                            </button>
+                        </div>
+                    </div>
+
+                    <dl class="row">
+                        <dt class="col-sm-4">Exploitation</dt>
+                        <dd class="col-sm-8">{{ plan.farm }}</dd>
+
+                        <dt class="col-sm-4">Type de Déchet</dt>
+                        <dd class="col-sm-8">{{ plan.type_dechet }}</dd>
+
+                        <dt class="col-sm-4">Quantité</dt>
+                        <dd class="col-sm-8">{{ plan.quantite }} kg</dd>
+
+                        <dt class="col-sm-4">Date</dt>
+                        <dd class="col-sm-8">{{ plan.date }}</dd>
+                    </dl>
+
+                    <div class="mt-4">
+                        <a href="{% url 'dechets:plan-list' %}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Retour à la Liste
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmer la Suppression</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer ce plan de gestion ?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <form action="{% url 'dechets:plan-delete' plan.pk %}" method="post" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Confirmer la Suppression</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header bg-info text-white">
+        <h5 class="mb-0"><i class="bi bi-robot"></i> Recommandations IA</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <h6>Méthode Recommandée</h6>
+                <div class="alert alert-success">
+                    <i class="bi bi-check-circle"></i>
+                    {{ plan.type_dechet.get_methode_traitement_display }}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h6>Efficacité du Traitement</h6>
+                <div class="progress mb-2" style="height: 25px;">
+                    <div class="progress-bar bg-success" role="progressbar" 
+                         style="width: {{ plan.type_dechet.efficacite_traitement }}%">
+                        {{ plan.type_dechet.efficacite_traitement }}%
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-3">
+            <small class="text-muted">
+                <i class="bi bi-info-circle"></i>
+                Déchet {% if plan.type_dechet.biodegradable %}biodégradable{% else %}non-biodégradable{% endif %}
+            </small>
+        </div>
+    </div>
+</div>
+
+<!-- Add after the existing plan details -->
+{% if ai_analysis %}
+<div class="card mt-4">
+    <div class="card-header bg-info text-white">
+        <h5 class="mb-0">
+            <i class="bi bi-robot"></i> Analyse IA
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-4">
+                    <h6>Méthode de Traitement</h6>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="alert alert-primary mb-0">
+                            <strong>Recommandée:</strong><br>
+                            <i class="bi bi-arrow-right-circle"></i> {{ ai_analysis.recommended_method }}
+                        </div>
+                        <div class="alert alert-secondary mb-0">
+                            <strong>Actuelle:</strong><br>
+                            <i class="bi bi-arrow-right-circle"></i> {{ ai_analysis.current_method }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h6>Efficacité du Traitement</h6>
+                <div class="mb-2">
+                    <small>Efficacité Prévue</small>
+                    <div class="progress" style="height: 25px;">
+                        <div class="progress-bar bg-success" role="progressbar" 
+                             style="width: {{ ai_analysis.predicted_efficiency }}%">
+                            {{ ai_analysis.predicted_efficiency }}%
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <small>Efficacité Actuelle</small>
+                    <div class="progress" style="height: 25px;">
+                        <div class="progress-bar bg-info" role="progressbar" 
+                             style="width: {{ ai_analysis.current_efficiency }}%">
+                            {{ ai_analysis.current_efficiency }}%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-3 pt-3 border-top">
+            <h6>Caractéristiques du Déchet</h6>
+            <span class="badge {% if ai_analysis.is_biodegradable %}bg-success{% else %}bg-warning{% endif %}">
+                {% if ai_analysis.is_biodegradable %}Biodégradable{% else %}Non-biodégradable{% endif %}
+            </span>
+            <small class="text-muted ms-2">
+                <i class="bi bi-info-circle"></i>
+                Ce facteur influence les recommandations de traitement
+            </small>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %} 

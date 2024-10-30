@@ -1,0 +1,93 @@
+{% extends 'dechets/base.html' %}
+
+{% block title %}{{ type_dechet.nom }}{% endblock %}
+
+{% block header %}
+<div class="page-header">
+    <div class="container">
+        <h1 class="text-center">{{ type_dechet.nom }}</h1>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dechets:type-dechet-list' %}">Types de Déchets</a></li>
+                    <li class="breadcrumb-item active">{{ type_dechet.nom }}</li>
+                </ol>
+            </nav>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="card-title mb-0">Détails du Type de Déchet</h3>
+                        <div>
+                            <a href="{% url 'dechets:type-dechet-update' type_dechet.pk %}" class="btn btn-primary">
+                                <i class="bi bi-pencil"></i> Modifier
+                            </a>
+                            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                <i class="bi bi-trash"></i> Supprimer
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Informations de Base</h5>
+                            <dl class="row">
+                                <dt class="col-sm-4">Nom</dt>
+                                <dd class="col-sm-8">{{ type_dechet.nom }}</dd>
+
+                                <dt class="col-sm-4">Biodégradable</dt>
+                                <dd class="col-sm-8">
+                                    <span class="badge {% if type_dechet.biodegradable %}bg-success{% else %}bg-warning{% endif %}">
+                                        {% if type_dechet.biodegradable %}Oui{% else %}Non{% endif %}
+                                    </span>
+                                </dd>
+
+                                <dt class="col-sm-4">Méthode de Traitement</dt>
+                                <dd class="col-sm-8">{{ type_dechet.methode_traitement }}</dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Statistiques</h5>
+                            <div class="progress mb-3" style="height: 25px;">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 75%">
+                                    Efficacité de Traitement: 75%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmer la Suppression</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer "{{ type_dechet.nom }}" ?</p>
+                <p class="text-muted">Cette action ne peut pas être annulée.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <form action="{% url 'dechets:type-dechet-delete' type_dechet.pk %}" method="post" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Confirmer la Suppression</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
